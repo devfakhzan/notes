@@ -1,10 +1,12 @@
 {
     "require": {
         "illuminate/database": "^8.29",
-        "illuminate/events": "^8.29"
+        "illuminate/events": "^8.29",
+        "firebase/php-jwt": "^5.2",
+        "vlucas/phpdotenv": "^5.3"
     },
     "autoload": {
-        "files": ["db.php", "app-config.php"],
+        "files": ["db.php", "app-config.php", "Classes\\Authentication.php"],
         "classmap": ["Models"]
     }
 

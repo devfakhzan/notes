@@ -1,8 +1,5 @@
 <?php
-    session_start();
     header('Content-type: application/json');
-    
-    require '..\vendor\autoload.php';
     $response['success'] = false;
 
     $d = json_decode(file_get_contents('php://input'), true);
@@ -19,7 +16,7 @@
         goto return_early;
     }
 
-    if ($result['user_id'] != $_SESSION['user_id']) {
+    if ($result['user_id'] != $auth->sub->user_id) {
         $response['error'] = 'Invalid note to delete!';
         goto return_early;
     }

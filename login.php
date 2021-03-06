@@ -1,16 +1,14 @@
 <?php
+require 'vendor\autoload.php';
 session_start();
 if (isset($_SESSION['reg_success'])) {
     $reg_success = true;
     unset($_SESSION['reg_success']);
 }
 
-if (isset($_SESSION['logged_in'])) {
+if (isset($_COOKIE['jwt']) && gettype(Auth::isAuthenticated($_COOKIE['jwt'])) !== 'string') {
     header('Location: /');
 }
-
-
-require 'vendor\autoload.php';
 
 if (
     isset($_POST['email']) &&
@@ -26,8 +24,8 @@ if (
         }
 
         if (password_verify($_POST['password'], $user['password'])) {
-            $_SESSION['logged_in'] = true;
-            $_SESSION['user_id'] = $user['id'];
+            $auth = new Auth($user['id']);
+            setcookie('jwt', $auth->jwt);
             header('Location: /');
         }
 
