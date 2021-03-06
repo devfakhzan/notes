@@ -1,11 +1,13 @@
 <?php
-    session_start();
-    if (!isset($_SESSION) || !$_SESSION['logged_in'] || !$_SESSION['user_id']) {
+    if (!$_COOKIE['jwt']) {
         header('Location: login.php');
-    }
+    };
 
+    
     require 'vendor\autoload.php';
-    $notes = Note::where('user_id', $_SESSION['user_id'])->orderBy('updated_at', 'DESC')->get();
+
+    $auth = Auth::isAuthenticated($_COOKIE['jwt']);
+    $notes = Note::where('user_id', $auth->sub->user_id)->orderBy('updated_at', 'DESC')->get();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +25,7 @@ include("includes\header.php");
                 </a>
         </div>
 
-        <form class="notes-main-container" method="POST" action="note/create.php">
+        <form class="notes-main-container" method="POST" action="note/index.php">
             <div>
                 <div class="form-label-group full-width">
                     <textarea name="note" id="note" class="form-control" placeholder="Enter your note here" required autofocus></textarea>
@@ -67,7 +69,7 @@ include("includes\header.php");
                 switch (this.dataset.action) {
                     case 'save':
 
-                        axios.post('note/update.php', {
+                        axios.patch('note/index.php', {
                             id,
                             note
                         }).then((r) => {
@@ -88,9 +90,11 @@ include("includes\header.php");
                     
                     case 'delete':
 
-                        axios.post('note/delete.php', {
-                            id,
-                            note
+                        axios.delete('note/index.php', {
+                            data: {
+                                id,
+                                note
+                            }
                         }).then((r) => {
                             const data = r.data;
 
